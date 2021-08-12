@@ -16,14 +16,31 @@
 <body>
     <div class="wrapper">
         <div class="form-signin">       
-          <h2 class="form-signin-heading">Sign in</h2>
+          <h2 class="form-signin-heading">Sign up</h2>
           <form method="post">
             <input type="text" class="form-control" name="username" placeholder="Account" required="" autofocus="" />
             <input type="password" class="form-control" name="password" placeholder="Password" required=""/>  
-            <input type="text" class="form-control" name="email" placeholder="Email" required=""/>      
-            <label class="checkbox">
-              <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
-            </label>
+            <input type="text" class="form-control" name="doituonguutien" placeholder="doituonguutien" required=""/>    
+            <input type="text" class="form-control" name="hovaten" placeholder="hovaten" required=""/>      
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">nơi tiêm</label>
+              <select class="form-control" name="loai" id="">
+                  <?php 
+                      $sql = "SELECT * FROM `noitiem`";
+                      $result = $conn->query($sql);
+                      if($result->num_rows > 0){
+                          while($row = $result->fetch_assoc()){
+                              $loai = $row['noitiem'];
+                              $id_loai = $row['id_noitiem'];
+                              echo '<option value="'.$id_loai.'">'.$loai.'</option>';
+                          }
+                      }
+                  ?>
+              </select>
+              
+            </div>
+           <label for="">Ngày giờ</label>
+           <input type="datetime-local" name="ngaygio" id="">
             <button class="btn btn-lg btn-primary btn-block btn-1" type="submit" name="submit">Register</button>
           </form>
         </div>
@@ -32,12 +49,26 @@
       if(isset($_POST['submit'])) {
         $account = $_POST['username'];
         $password = $_POST['password'];
-        $email = $_POST['email'];
-        $sql = "INSERT INTO user VALUES (null, '$account', '$email', '$password', '$today', 0)";
-        $result = $conn->query($sql);
-        if($result){
-          echo "<script>alert('Đăng ký thành công')</script>";
-          echo "<script>location.href='login.php?q=product'</script>";
+        $loai = $_POST['loai'];
+        $doituonguutien = $_POST['doituonguutien'];
+        $hovaten = $_POST['hovaten'];
+        $ngaygio = $_POST['ngaygio'];
+        $sql2 = "SELECT * FROM nguoidung WHERE tendangnhap = '$account'";
+        $row = $conn->query($sql2);
+        if ($row->num_rows> 0) {
+          echo '
+          <script>
+          alert("Tai khoan da co nguoi dung")
+          </script>
+          ';
+        }
+        else {
+          $sql = "INSERT INTO nguoidung VALUES (null, '$account', '$password', '$doituonguutien', '$hovaten','$ngaygio', $loai,0)";
+          $result = $conn->query($sql);
+          if($result){
+            echo "<script>alert('Đăng ký thành công')</script>";
+            echo "<script>location.href='login.php?q=product'</script>";
+          }
         }
       }
     ?>
